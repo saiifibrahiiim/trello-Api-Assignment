@@ -1,0 +1,941 @@
+{
+	"info": {
+		"_postman_id": "5b7f5f85-ad37-4396-a98a-e702252ddbbd",
+		"name": "Api assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38865291"
+	},
+	"item": [
+		{
+			"name": "Create Board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (response.id) {\r",
+							"    pm.collectionVariables.set(\"board id\", response.id);\r",
+							"    console.log(\"ID saved successfully: \" + response.id);\r",
+							"} else {\r",
+							"    console.error(\"ID not found in the response!\");\r",
+							"}\r",
+							"\r",
+							"pm.test(\"validate on board name\", function () {\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"saif\");\r",
+							"});\r",
+							"pm.test(\"validate on permissionLevel\", function () {\r",
+							"    pm.expect(pm.response.json().prefs.permissionLevel).to.equal(\"private\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on background\", function () {\r",
+							"    pm.expect(pm.response.json().prefs.background).to.equal(\"blue\");\r",
+							"});\r",
+							"pm.test(\"validate on the view type\", function(){\r",
+							"    pm.expect(pm.response.json().prefs.switcherViews[0].viewType).to.equal(\"Board\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?name={{name}}&key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Board (no name)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"validate board must have name to be created\",function(){\r",
+							"    pm.response.to.have.status(400)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"validate response error body is invalid name\",function(){\r",
+							"    pm.expect(response.message).to.equal(\"invalid value for name\")\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Board (wrong key)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"pm.test(\"validate board can't be created by invalid key\",function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message contains invalid key\", function () {\r",
+							"    pm.expect(response).to.include(\"invalid key\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?key=f1c15bdb4538349334320fef89265b3g&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "f1c15bdb4538349334320fef89265b3g"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Board (wrong token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"\r",
+							"pm.test(\"validate board can't be created by invalid token\",function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message contains invalid token error\", function () {\r",
+							"    pm.expect(response).to.equal(\"invalid token\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?key={{key}}&token=ATTA817a19ff6fed9778f2751829cc1ab7747524fb5582ba5569ec3897d7e3d585faE47F6867",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "ATTA817a19ff6fed9778f2751829cc1ab7747524fb5582ba5569ec3897d7e3d585faE47F6867"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on name update\",function(){\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"saifo\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on desc uptdate\" , function(){\r",
+							"pm.expect(pm.response.json().desc).to.equal(\"hi\")\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}?key={{key}}&token={{token}}&name=saifo&desc=hi",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						},
+						{
+							"key": "name",
+							"value": "saifo"
+						},
+						{
+							"key": "desc",
+							"value": "hi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update board (with invalid board id)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"pm.test(\"validate board can't be updated with invalid board id\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate error message is invalid id by entering invalid board id\",function(){\r",
+							"    pm.expect(response).to.equal(\"invalid id\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/78d85d1a4dccdfa281a5f4c?key={{key}}&token={{token}}&name=saifo&desc=hi",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"78d85d1a4dccdfa281a5f4c"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						},
+						{
+							"key": "name",
+							"value": "saifo"
+						},
+						{
+							"key": "desc",
+							"value": "hi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update board (with invalid key)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"pm.test(\"validate board can't be updated by invalid key\",function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message contains invalid key\", function () {\r",
+							"    pm.expect(response).to.include(\"invalid key\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}?key=n1c15bdb4538349334320fef89265b3e&token={{token}}&name=saifo&desc=hi",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "n1c15bdb4538349334320fef89265b3e"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						},
+						{
+							"key": "name",
+							"value": "saifo"
+						},
+						{
+							"key": "desc",
+							"value": "hi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on members id\" , function(){\r",
+							"pm.expect(pm.response.json().members[0].id).to.equal(\"63d921cafb00392c0ef6c1d2\")\r",
+							"pm.expect(pm.response.json().members[1].id).to.equal(\"67852e9abac2e516e1e9ec42\")\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on new user full name\",function(){\r",
+							"    pm.expect(pm.response.json().members[0].fullName).to.equal(\"Sara Hossny Hassan\")\r",
+							"    pm.expect(pm.response.json().members[1].fullName).to.equal(\"saif\")\r",
+							"})\r",
+							"\r",
+							"\r",
+							"pm.test(\"validate that the member type is normal\", function () {\r",
+							"    pm.expect(response.members[0].memberType).to.equal(\"normal\");\r",
+							"    pm.expect(response.members[1].memberType).to.equal(\"normal\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members/{{saraID}}?type=normal&key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members",
+						"{{saraID}}"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "normal"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add member (invalid member id)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message is :member not found \", function () {\r",
+							"    pm.expect(response).to.include(\"member not found\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members/63d921cafb00392c0ef6c1d3?type=normal&key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members",
+						"63d921cafb00392c0ef6c1d3"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "normal"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add member (invalid type)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message is : invalid value for type\", function () {\r",
+							"    pm.expect(response).to.include(\"invalid value for type\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members/{{saraID}}?type=tanent&key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members",
+						"{{saraID}}"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "tanent"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get membership",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response=pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate on response schema\", function () {\r",
+							"     pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+							"     pm.expect(pm.response.json()[0]).to.have.property('id');\r",
+							"     pm.expect(pm.response.json()[0]).to.have.property('fullName');\r",
+							"     pm.expect(pm.response.json()[0]).to.have.property('username');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate the first member's ID\", function () {\r",
+							"    pm.expect(response[0].id).to.equal(\"63d921cafb00392c0ef6c1d2\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate the second member's ID\",function(){\r",
+							"    pm.expect(pm.response.json()[1].id).to.equal(\"67852e9abac2e516e1e9ec42\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members?key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get membership (invalid token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.text();\r",
+							"\r",
+							"\r",
+							"pm.test(\"validate board can't be created by invalid token\",function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate error message is : invalid token\", function () {\r",
+							"    pm.expect(response).to.equal(\"invalid token\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members?key={{key}}&token=ATTA817a19ff6fed9778f2751829cc1ab7747524fb5582ba5569ec3897d7e3d585faE47F8868",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "ATTA817a19ff6fed9778f2751829cc1ab7747524fb5582ba5569ec3897d7e3d585faE47F8868"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response=pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate member is deleted\", function () {\r",
+							"    // Extract the array of member IDs from the response\r",
+							"    const memberIds = pm.response.json().members.map(member => member.id);\r",
+							"\r",
+							"    // Define the deleted member's ID (replace with the actual ID you want to test)\r",
+							"    const deletedMemberId = \"63d921cafb00392c0ef6c1d2\";\r",
+							"\r",
+							"    // Assert that the deleted member's ID is not in the array\r",
+							"    pm.expect(memberIds).to.not.include(deletedMemberId);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}/members/{{saraID}}?key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}",
+						"members",
+						"{{saraID}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response=pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"validate board deletion\", function () {\r",
+							"    pm.expect(response._value).to.equal(null);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{board id}}?key={{key}}&token={{token}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{board id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "key",
+			"value": "f1c15bdb4538349334320fef89265b3e",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "ATTA817a19ff6fed9778f2751829cc1ab7747524fb5582ba5569ec3897d7e3d585faE47F8867",
+			"type": "string"
+		},
+		{
+			"key": "board id",
+			"value": "678516fa59df0d03f8d4d2c3",
+			"type": "string"
+		},
+		{
+			"key": "name",
+			"value": "saif"
+		},
+		{
+			"key": "saraID",
+			"value": "63d921cafb00392c0ef6c1d2",
+			"type": "string"
+		}
+	]
+}
